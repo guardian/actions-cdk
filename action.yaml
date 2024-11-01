@@ -1,0 +1,18 @@
+name: Run CDK commands
+description: Run CDK to Lint, Test, and Synth the CDK app
+runs:
+  using: composite
+  steps:
+    - name: Run CDK Container
+      env:
+        IMAGE_VERSION: ${{github.action_ref}}
+      shell: bash
+      run: |
+        docker run \
+          --volume ${{github.workspace}}/cdk.ts:/cdk/cdk.ts \
+          --volume ${{github.workspace}}/lib:/cdk/lib \
+          --volume ${{github.workspace}}/cdk.out:/cdk/cdk.out \
+          --entrypoint /bin/sh \
+          ghcr.io/guardian/actions-cdk:$IMAGE_VERSION \
+          npm run lint && npm run test && npm run synth
+      
